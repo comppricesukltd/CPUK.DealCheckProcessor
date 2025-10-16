@@ -93,8 +93,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                         url = competitorsResponse?.Url,
                         isUrlValid = true,
                         requestId = dealCheckRequest.Id,
-                        companyId = company.Id,
-                        imageId = "asdasd"
+                        companyId = company.Id, 
                     });
 
                     IsCompetitorSet = true;

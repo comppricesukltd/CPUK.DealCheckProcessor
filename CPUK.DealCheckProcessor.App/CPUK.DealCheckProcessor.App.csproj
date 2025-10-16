@@ -59,7 +59,7 @@
       <HintPath>..\packages\CPUK.Authorization.DataAccess.0.0.0.1\lib\CPUK.Authorization.DataAccess.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.BusinessLogic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.BusinessLogic.0.0.0.73\lib\CPUK.BusinessLogic.dll</HintPath>
+      <HintPath>..\packages\CPUK.BusinessLogic.0.0.0.74\lib\CPUK.BusinessLogic.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.ConfigurationSettings, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CPUK.ConfigurationSettings.0.0.0.12\lib\CPUK.ConfigurationSettings.dll</HintPath>
