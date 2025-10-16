@@ -13,7 +13,7 @@ namespace CPUK.DealCheckProcessor.App
             {
 
 #if DEBUG
-                args = new[] { "-main" };
+                args = new[] { "-nudge" };
 #endif
                 if (args.ElementAtOrDefault(0) == "-competitor" || args.Length == 0)
                     await new DealCheckProcessingService().Run();

@@ -21,7 +21,11 @@ namespace CPUK.DealCheckProcessor.App.Service
                 await semaphore.WaitAsync();
                 taskList.Add(Task.Run(() =>
                 {
-                    try { new UserMessagingService(dealCheck).SendNudgeMessage("https://anybetter.com/results"); }
+                    try
+                    {
+                        new UserMessagingService(dealCheck).SendNudgeMessage("https://anybetter.com/results");
+                        dealCheckService.WriteDealCheckRequestNudged(dealCheck.Id);
+                    }
                     finally { semaphore.Release(); }
                 }));
             }
@@ -31,7 +35,11 @@ namespace CPUK.DealCheckProcessor.App.Service
                 await semaphore.WaitAsync();
                 taskList.Add(Task.Run(() =>
                 {
-                    try { new UserMessagingService(dealCheck).SendNudgeMessage_clarification( ); }
+                    try
+                    {
+                        new UserMessagingService(dealCheck).SendNudgeMessage_clarification();
+                        dealCheckService.WriteDealCheckRequestClarificationNudged(dealCheck.Id);
+                    }
                     finally { semaphore.Release(); }
                 }));
             }
