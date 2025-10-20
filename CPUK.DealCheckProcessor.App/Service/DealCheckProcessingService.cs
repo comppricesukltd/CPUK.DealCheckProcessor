@@ -22,7 +22,7 @@ namespace CPUK.DealCheckProcessor.App.Service
         private readonly DealCheckService dealCheckService = new DealCheckService();
         private readonly DealCheckRepository dealCheckRepository = new DealCheckRepository();
         private readonly CompanyScriptRepository companyScriptRepository = new CompanyScriptRepository();
-        private readonly CompanyScriptService companyScriptService = new CompanyScriptService();
+        private readonly BusinessLogic.Services.DealCheckProcessingService dealCheckProcessingService = new BusinessLogic.Services.DealCheckProcessingService();
         public async Task Run()
         {
             var scriptList = companyScriptRepository.GetCompanyScript();
@@ -80,7 +80,7 @@ namespace CPUK.DealCheckProcessor.App.Service
             {
                 Console.WriteLine($"Start[{dealCheckRequest.Id}][{company.Name}]");
 
-                var competitorsResponse = await companyScriptService.TryGetDealCheckOffer_Competitors(company.Id, dealCheckRequest.Main.Offer);
+                var competitorsResponse = await dealCheckProcessingService.GetCompetitorOffers(dealCheckRequest, company.Id);
                 offersCount = competitorsResponse?.OfferList?.Count ?? 0;
 
                 if (competitorsResponse?.OfferList?.Any() ?? false)
