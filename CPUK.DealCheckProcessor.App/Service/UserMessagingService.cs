@@ -2,7 +2,7 @@
 using CPUK.Authorization.Service;
 using CPUK.BusinessLogic.Services;
 using CPUK.Domain.Entities.DealCheck;
-using CPUK.Domain.Entities.Hotel; 
+using CPUK.Domain.Entities.Hotel;
 using CPUK.Domain.Entities.Util;
 using CPUK.ExternalCommunication.Twilio;
 using System;
@@ -25,11 +25,14 @@ namespace CPUK.DealCheckProcessor.App.Service
             public static readonly string HourglassWithFlowingSand = "\u23F3\uFE0F";
 
             public static readonly string RightPointingMagnifyingGlass = "\U0001F50E";
+            public static readonly string LeftPointingMagnifyingGlass = "\U0001F50D";
             public static readonly string SpeechBalloon = "\U0001F4AC";
             public static readonly string GlowingStar = "\U0001F31F";
             public static readonly string Star = "\u2B50\uFE0F";
             public static readonly string Sparklestar = "\u2728\uFE0F";
             public static readonly string WhiteHeavyCheckMark = "\u2705\uFE0F";
+            public static readonly string LowerRightPencil = "\u270E\uFE0F";
+            public static readonly string WhiteRightPointingBackhandIndex = "\U0001F449";
 
 
 
@@ -63,8 +66,6 @@ namespace CPUK.DealCheckProcessor.App.Service
                 $"See your full set of live deals here:\n" +
                 $"{link}", out _);
 
-        private bool SendindAllowed()
-            => true;
 
         public void StopUserMessaging()
         {
@@ -77,33 +78,27 @@ namespace CPUK.DealCheckProcessor.App.Service
         public void StartUserMessaging()
             => messagingTask = Task.Run(async () =>
             {
-
-                //step 1: Aknowledge. Ask permission for sending messages
-                TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeTemplateSid);
-
-
-                //step 2: Wait until allowed to send messages (so user clicked CONFIRM in whatsapp)
-                while (!SendindAllowed())
+                if (!TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
                 {
-                    CancellationToken.ThrowIfCancellationRequested();
-                    await Task.Delay(TimeSpan.FromSeconds(3), CancellationToken);
+                    //step 0: Aknowledge. Ask permission for sending messages
+                    TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeTemplateSid);
+
                 }
 
-                //If competitors processing is done => cancel messaging
-                CancellationToken.ThrowIfCancellationRequested();
 
-                //step 3: Send initial message
+                await CheckCSWindowOpenOrWait();
+
+
+                //step 1: Send initial message
                 TwilioService.SendWhatsappMessage(PhoneNumber,
                     $"Hi {Emoji.WavingHandSign} we’ve got your request for *{HotelData.Name}* in {Emoji.RoundPushpin}*{HotelData.Country}, {HotelData.Locale}, {HotelData.City}* ({DateRange.Value.LeftBound:d-MMM-yy} → {DateRange.Value.RightBound:d-MMM-yy}).\n" +
                     "\n" +
                     $"We’re now checking {Emoji.Airplane} flights, {Emoji.Bed} rooms, and {Emoji.ForkAndKnife} meal plans across trusted operators.\n" +
                     $"Hang tight {Emoji.HourglassWithFlowingSand} - I’ll keep you posted and send your full results link her", out _);
 
-                //step 4: Wait 30s
+                //step 2: Wait 30s
                 await Task.Delay(TimeSpan.FromSeconds(30), CancellationToken);
 
-                //If competitors processing is done => cancel messaging
-                CancellationToken.ThrowIfCancellationRequested();
 
 
                 //If has reviews - lets send them
@@ -112,7 +107,9 @@ namespace CPUK.DealCheckProcessor.App.Service
                     var review1 = HotelData.ReviewList.ElementAtOrDefault(0);
                     var review2 = HotelData.ReviewList.ElementAtOrDefault(1);
 
-                    //step 5: Send first review
+                    await CheckCSWindowOpenOrWait();
+
+                    //step 3: Send first review
                     TwilioService.SendWhatsappMessage(PhoneNumber,
                         $"{Emoji.RightPointingMagnifyingGlass} Still crunching the details *{HotelData.Name}*…\n" +
                         "\n" +
@@ -123,13 +120,13 @@ namespace CPUK.DealCheckProcessor.App.Service
                     //Checking if there is second review
                     if (review2 != null)
                     {
-                        //step 6: Wait 90s
+                        //step 4: Wait 90s
                         await Task.Delay(TimeSpan.FromSeconds(90), CancellationToken);
 
-                        //If competitors processing is done => cancel messaging
-                        CancellationToken.ThrowIfCancellationRequested();
+                        //If competitors processing is done => cancel messaging 
+                        await CheckCSWindowOpenOrWait();
 
-                        //step 7: Send second review
+                        //step 5: Send second review
                         TwilioService.SendWhatsappMessage(PhoneNumber,
                             $"{Emoji.GlowingStar} Good news - multiple {Emoji.Airplane}{Emoji.Bed} flight and room options are available for *{HotelData.Name}*…\n" +
                             "\n" +
@@ -142,16 +139,49 @@ namespace CPUK.DealCheckProcessor.App.Service
 
             }, CancellationToken);
 
+        private async Task CheckCSWindowOpenOrWait()
+        {
+            while (!TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
+            {
+                CancellationToken.ThrowIfCancellationRequested();
+                await Task.Delay(TimeSpan.FromSeconds(3), CancellationToken);
+            }
+
+            CancellationToken.ThrowIfCancellationRequested();
+        }
+
         private static string GetRating(int rating) => string.Join("", Enumerable.Range(0, rating).Select(x => Emoji.Star));
         private static string GetReviewSnipper(HotelReview review)
             => $"{GetRating(review.Rating)} “_{review.Review}_” – {review.ReviewDateTime:d-MMM-yy}";
 
         public void SendNudgeMessage(string link)
-            => TwilioService.SendWhatsappMessage(PhoneNumber,
+        {
+            if (!TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
+            {
+                TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeGenericTemplateSid);
+            }
+            else
+            {
+                TwilioService.SendWhatsappMessage(PhoneNumber,
                 $"Just a reminder - your {HotelData.Name} results are ready {Emoji.WhiteHeavyCheckMark}\n" +
                 $"Open them here: {link}", out _);
+            }
+        }
 
-        public void SendNudgeMessage_clarification()
-          => TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, "HX6a704e751435a515893bd5d41d18eca4");
+        public void SendNudgeMessage_clarification(string link)
+        {
+
+            if (!TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
+            {
+                TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeGenericTemplateSid);
+            }
+            else
+            {
+                TwilioService.SendWhatsappMessage(PhoneNumber,
+              $"We need a little more info before we can start searching for your best deals {Emoji.LowerRightPencil}\n" +
+              $"It’ll only take a second - see what we need here {Emoji.WhiteRightPointingBackhandIndex}{Emoji.LeftPointingMagnifyingGlass}" +
+              $"{link}", out _);
+            }
+        }
     }
 }

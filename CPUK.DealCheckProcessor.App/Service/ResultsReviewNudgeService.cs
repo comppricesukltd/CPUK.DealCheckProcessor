@@ -37,7 +37,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                 {
                     try
                     {
-                        new UserMessagingService(dealCheck).SendNudgeMessage_clarification();
+                        new UserMessagingService(dealCheck).SendNudgeMessage_clarification("https://anybetter.com/results");
                         dealCheckService.WriteDealCheckRequestClarificationNudged(dealCheck.Id);
                     }
                     finally { semaphore.Release(); }

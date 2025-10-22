@@ -65,13 +65,13 @@
       <HintPath>..\packages\CPUK.ConfigurationSettings.0.0.0.13\lib\CPUK.ConfigurationSettings.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.DataAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.DataAccess.0.0.0.49\lib\CPUK.DataAccess.dll</HintPath>
+      <HintPath>..\packages\CPUK.DataAccess.0.0.0.51\lib\CPUK.DataAccess.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CPUK.Domain.0.0.0.56\lib\CPUK.Domain.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.ExternalCommunication, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.ExternalCommunication.0.0.0.5\lib\CPUK.ExternalCommunication.dll</HintPath>
+      <HintPath>..\packages\CPUK.ExternalCommunication.0.0.0.7\lib\CPUK.ExternalCommunication.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.Utility, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CPUK.Utility.0.0.0.13\lib\CPUK.Utility.dll</HintPath>
