@@ -6,6 +6,7 @@ using CPUK.Domain.Entities.Hotel;
 using CPUK.Domain.Entities.Util;
 using CPUK.ExternalCommunication.Twilio;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,19 +32,24 @@ namespace CPUK.DealCheckProcessor.App.Service
             public static readonly string Star = "\u2B50\uFE0F";
             public static readonly string Sparklestar = "\u2728\uFE0F";
             public static readonly string WhiteHeavyCheckMark = "\u2705\uFE0F";
-            public static readonly string LowerRightPencil = "\u270E\uFE0F";
+            public static readonly string LowerRightPencil = "✏️";
             public static readonly string WhiteRightPointingBackhandIndex = "\U0001F449";
 
 
 
         }
 
+        private readonly MagicLinkService magicLinkService = new MagicLinkService();
+        private readonly ShortLinkService shortLinkService = new ShortLinkService();
         private readonly Lazy<AuthService> authService = new Lazy<AuthService>(() => new AuthService(new SigninDbContext()));
         private readonly TTIHotelService TTIHotelService = new TTIHotelService();
 
         private readonly string PhoneNumber;
         private readonly TTIHotel HotelData;
         private readonly DealCheckOffer MainDealCheckOffer;
+
+        private readonly int DealCheckRequestId;
+        private readonly int UserId;
         private readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
 
         private Task messagingTask;
@@ -54,9 +60,17 @@ namespace CPUK.DealCheckProcessor.App.Service
             PhoneNumber = authService.Value.GetUserPhoneNumber(dealCheckRequest.UserId);
             HotelData = TTIHotelService.GetHotels(dealCheckRequest.Main.Offer.TtiCode).FirstOrDefault();
             MainDealCheckOffer = dealCheckRequest.Main.Offer;
+
         }
 
-        public void SendCompletedNotification(string link)
+        private string GetLinkForDealCheckRequest()
+            => shortLinkService.CreatShortLink(new ShortLinkBuilder($"https://anybetter.com/results/{DealCheckRequestId}",
+                new Dictionary<string, string> {
+                    { MagicLinkService.QP_KEY, magicLinkService.CreateMagicLinkToken(UserId).ToString().ToLower() },
+                    { "code", "hesoyam" }
+            }));
+
+        public void SendCompletedNotification()
             => TwilioService.SendWhatsappMessage(PhoneNumber,
                 $"{Emoji.Sparklestar} All done!\n" +
                 $"We’ve checked across all the top operators so you don’t have to.\n" +
@@ -64,7 +78,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                 $"Your *{HotelData.Name}* results are ready - with every available {Emoji.Airplane}{Emoji.Bed} flight, room, and meal plan in one place.\n" +
                 $"\n" +
                 $"See your full set of live deals here:\n" +
-                $"{link}", out _);
+                GetLinkForDealCheckRequest(), out _);
 
 
         public void StopUserMessaging()
@@ -154,33 +168,37 @@ namespace CPUK.DealCheckProcessor.App.Service
         private static string GetReviewSnipper(HotelReview review)
             => $"{GetRating(review.Rating)} “_{review.Review}_” – {review.ReviewDateTime:d-MMM-yy}";
 
-        public void SendNudgeMessage(string link)
+        public bool SendNudgeMessage()
         {
             if (!TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
             {
                 TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeGenericTemplateSid);
+                return false;
             }
             else
             {
                 TwilioService.SendWhatsappMessage(PhoneNumber,
-                $"Just a reminder - your {HotelData.Name} results are ready {Emoji.WhiteHeavyCheckMark}\n" +
-                $"Open them here: {link}", out _);
+                    $"Just a reminder - your {HotelData.Name} results are ready {Emoji.WhiteHeavyCheckMark}\n" +
+                    $"Open them here: {GetLinkForDealCheckRequest()}", out _);
+                return true;
             }
         }
 
-        public void SendNudgeMessage_clarification(string link)
+        public bool SendNudgeMessage_clarification()
         {
 
             if (!TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
             {
                 TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeGenericTemplateSid);
+                return false;
             }
             else
             {
                 TwilioService.SendWhatsappMessage(PhoneNumber,
-              $"We need a little more info before we can start searching for your best deals {Emoji.LowerRightPencil}\n" +
-              $"It’ll only take a second - see what we need here {Emoji.WhiteRightPointingBackhandIndex}{Emoji.LeftPointingMagnifyingGlass}" +
-              $"{link}", out _);
+                    $"We need a little more info before we can start searching for your best deals {Emoji.LowerRightPencil}\n" +
+                    $"It’ll only take a second - see what we need here {Emoji.WhiteRightPointingBackhandIndex}{Emoji.LeftPointingMagnifyingGlass}" +
+                    $"{GetLinkForDealCheckRequest()}", out _);
+                return true;
             }
         }
     }

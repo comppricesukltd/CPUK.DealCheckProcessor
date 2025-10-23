@@ -67,7 +67,7 @@ namespace CPUK.DealCheckProcessor.App.Service
 
 
             messagingService.StopUserMessaging();
-            messagingService.SendCompletedNotification("https://anybetter.com/results");
+            messagingService.SendCompletedNotification();
         }
 
 

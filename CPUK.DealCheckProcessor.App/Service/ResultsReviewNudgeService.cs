@@ -23,8 +23,8 @@ namespace CPUK.DealCheckProcessor.App.Service
                 {
                     try
                     {
-                        new UserMessagingService(dealCheck).SendNudgeMessage("https://anybetter.com/results");
-                        dealCheckService.WriteDealCheckRequestNudged(dealCheck.Id);
+                        if (new UserMessagingService(dealCheck).SendNudgeMessage())
+                            dealCheckService.WriteDealCheckRequestNudged(dealCheck.Id);
                     }
                     finally { semaphore.Release(); }
                 }));
@@ -37,8 +37,8 @@ namespace CPUK.DealCheckProcessor.App.Service
                 {
                     try
                     {
-                        new UserMessagingService(dealCheck).SendNudgeMessage_clarification("https://anybetter.com/results");
-                        dealCheckService.WriteDealCheckRequestClarificationNudged(dealCheck.Id);
+                        if (new UserMessagingService(dealCheck).SendNudgeMessage_clarification())
+                            dealCheckService.WriteDealCheckRequestClarificationNudged(dealCheck.Id);
                     }
                     finally { semaphore.Release(); }
                 }));
