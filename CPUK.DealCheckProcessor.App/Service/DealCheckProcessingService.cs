@@ -38,7 +38,7 @@ namespace CPUK.DealCheckProcessor.App.Service
             await Task.WhenAll(taskList);
         }
 
-        public async Task ProduceCompetitors(DealCheckRequest dealCheckRequest)
+        public async Task ProduceCompetitors(DealCheckRequestFull dealCheckRequest)
         {
 
 
@@ -77,7 +77,7 @@ namespace CPUK.DealCheckProcessor.App.Service
         }
 
 
-        private async Task<bool> TryProduceCompetitors(DealCheckRequest dealCheckRequest, Company company)
+        private async Task<bool> TryProduceCompetitors(DealCheckRequestFull dealCheckRequest, Company company)
         {
             var IsCompetitorSet = false;
             var offersCount = 0;
