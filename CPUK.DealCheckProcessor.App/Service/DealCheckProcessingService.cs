@@ -1,16 +1,13 @@
-﻿using CPUK.Authorization.Service;
-using CPUK.BusinessLogic.Services;
+﻿using CPUK.BusinessLogic.Services;
 using CPUK.DataAccess;
 using CPUK.DataAccess.Repositories;
-using CPUK.Domain.DBModels.DealCheck;
+using CPUK.Domain.Data;
 using CPUK.Domain.Entities.Company;
 using CPUK.Domain.Entities.DealCheck;
-using CPUK.Domain.Entities.Util;
 using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,11 +26,11 @@ namespace CPUK.DealCheckProcessor.App.Service
             var screenshootScriptList = scriptList.Where(x => x.Type == CompanyScriptType.Screenshoot);
 
             var dealCheckList = dealCheckRepository.GetDealCheckRequestListNotCompleted();
-            dealCheckList = dealCheckList.Where(x => x.Main.Offer.IsComplete).ToList();
+            dealCheckList = dealCheckList.Where(x => x.Criteria.IsComplete).ToList();
             var semaphore = new SemaphoreSlim(3);
             var taskList = new List<Task>();
 
-            foreach (var dealCheck in dealCheckList.Where(x => x.Main.Offer.IsComplete))
+            foreach (var dealCheck in dealCheckList.Where(x => x.Criteria.IsComplete))
             {
                 await semaphore.WaitAsync();
                 taskList.Add(ProduceCompetitors(dealCheck).ContinueWith(ct => semaphore.Release()));
@@ -41,37 +38,46 @@ namespace CPUK.DealCheckProcessor.App.Service
             await Task.WhenAll(taskList);
         }
 
-        public async Task ProduceCompetitors(DealCheckRequestFull dealCheckRequest)
+        public async Task ProduceCompetitors(DealCheckRequest dealCheckRequest)
         {
 
 
 
-
-            var messagingService = new UserMessagingService(dealCheckRequest);
-            messagingService.StartUserMessaging();
-
-            var semaphore = new SemaphoreSlim(5);
-
-            var taskList = new List<Task<bool>>();
-
-            foreach (var company in StaticDataHolder.Company)
+            try
             {
-                await semaphore.WaitAsync();
-                taskList.Add(TryProduceCompetitors(dealCheckRequest, company).ContinueWith(ct => { semaphore.Release(); return ct.Result; }));
+
+                var messagingService = new UserMessagingService(dealCheckRequest);
+                messagingService.StartUserMessaging();
+
+                var semaphore = new SemaphoreSlim(5);
+
+                var taskList = new List<Task<bool>>();
+
+                foreach (var company in StaticDataHolder.Company)
+                {
+                    if (company.Id == CompanyId.BookingCom) continue;//skip booking.com temporarily
+
+                    await semaphore.WaitAsync();
+                    taskList.Add(TryProduceCompetitors(dealCheckRequest, company).ContinueWith(ct => { semaphore.Release(); return ct.Result; }));
+                }
+                var anyCompetitorSet = (await Task.WhenAll(taskList)).Any();
+                if (anyCompetitorSet)
+                {
+                    dealCheckRepository.WriteDealCheckRequestCompleted(dealCheckRequest.Id);
+                }
+
+
+                messagingService.StopUserMessaging();
+                messagingService.SendCompletedNotification();
             }
-            var anyCompetitorSet = (await Task.WhenAll(taskList)).Any();
-            if (anyCompetitorSet)
+            catch
             {
-                dealCheckRepository.WriteDealCheckRequestCompleted(dealCheckRequest.Id);
+
             }
-
-
-            messagingService.StopUserMessaging();
-            messagingService.SendCompletedNotification();
         }
 
 
-        private async Task<bool> TryProduceCompetitors(DealCheckRequestFull dealCheckRequest, Company company)
+        private async Task<bool> TryProduceCompetitors(DealCheckRequest dealCheckRequest, Company company)
         {
             var IsCompetitorSet = false;
             var offersCount = 0;
@@ -80,30 +86,25 @@ namespace CPUK.DealCheckProcessor.App.Service
             {
                 Console.WriteLine($"Start[{dealCheckRequest.Id}][{company.Name}]");
 
-                var competitorsResponse = await dealCheckProcessingService.GetCompetitorOffers(dealCheckRequest, company.Id);
-                offersCount = competitorsResponse?.OfferList?.Count ?? 0;
+                var offerList = await dealCheckProcessingService.GetOfferList(dealCheckRequest, company.Id);
+                offersCount = offerList?.Count ?? 0;
 
-                if (competitorsResponse?.OfferList?.Any() ?? false)
+                if (offerList?.Any() ?? false)
                 {
 
-                    var dealCheckId = dealCheckRepository.CreateDealCheck(new sp_create_deal_check_prc
-                    {
-
-                        isMain = false,
-                        url = competitorsResponse?.Url,
-                        isUrlValid = true,
-                        requestId = dealCheckRequest.Id,
-                        companyId = company.Id, 
-                    });
 
                     IsCompetitorSet = true;
 
-                    dealCheckService.WriteDealCheckOffer(dealCheckId, competitorsResponse.OfferList);
+                    dealCheckService.WriteDealCheckOffer(dealCheckRequest.Id, company.Id, offerList);
 
 
                 }
             }
-            catch { }
+            catch (Exception error)
+            {
+
+
+            }
             stopwatch.Stop();
             Console.WriteLine($"End[{dealCheckRequest.Id}][{company.Name}] Count={offersCount}; time={stopwatch.ElapsedMilliseconds}ms");
             return IsCompetitorSet;

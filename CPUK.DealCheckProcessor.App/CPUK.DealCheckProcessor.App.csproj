@@ -59,16 +59,16 @@
       <HintPath>..\packages\CPUK.Authorization.DataAccess.0.0.0.1\lib\CPUK.Authorization.DataAccess.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.BusinessLogic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.BusinessLogic.0.0.1.4\lib\CPUK.BusinessLogic.dll</HintPath>
+      <HintPath>..\packages\CPUK.BusinessLogic.0.0.1.7\lib\CPUK.BusinessLogic.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.ConfigurationSettings, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CPUK.ConfigurationSettings.0.0.0.14\lib\CPUK.ConfigurationSettings.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.DataAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.DataAccess.0.0.0.53\lib\CPUK.DataAccess.dll</HintPath>
+      <HintPath>..\packages\CPUK.DataAccess.0.0.0.55\lib\CPUK.DataAccess.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.Domain.0.0.0.58\lib\CPUK.Domain.dll</HintPath>
+      <HintPath>..\packages\CPUK.Domain.0.0.0.60\lib\CPUK.Domain.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.ExternalCommunication, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CPUK.ExternalCommunication.0.0.0.7\lib\CPUK.ExternalCommunication.dll</HintPath>

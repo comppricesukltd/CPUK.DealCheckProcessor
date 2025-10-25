@@ -46,7 +46,7 @@ namespace CPUK.DealCheckProcessor.App.Service
 
         private readonly string PhoneNumber;
         private readonly TTIHotel HotelData;
-        private readonly DealCheckOffer MainDealCheckOffer;
+        private readonly DealCheckCriteria Criteria;
 
         private readonly int DealCheckRequestId;
         private readonly int UserId;
@@ -54,12 +54,12 @@ namespace CPUK.DealCheckProcessor.App.Service
 
         private Task messagingTask;
         private CancellationToken CancellationToken => CancellationTokenSource.Token;
-        public Lazy<BoundsRange<DateTime>> DateRange => new Lazy<BoundsRange<DateTime>>(() => new BoundsRange<DateTime>(MainDealCheckOffer.DepartureDate.Value, MainDealCheckOffer.DepartureDate.Value.AddDays(MainDealCheckOffer.Duration.Value)));
-        public UserMessagingService(DealCheckRequestFull dealCheckRequest)
+        public Lazy<BoundsRange<DateTime>> DateRange => new Lazy<BoundsRange<DateTime>>(() => new BoundsRange<DateTime>(Criteria.DepartureDate.Value, Criteria.DepartureDate.Value.AddDays(Criteria.Duration.Value)));
+        public UserMessagingService(DealCheckRequest dealCheckRequest)
         {
             PhoneNumber = authService.Value.GetUserPhoneNumber(dealCheckRequest.UserId);
-            HotelData = TTIHotelService.GetHotels(dealCheckRequest.Main.Offer.TtiCode).FirstOrDefault();
-            MainDealCheckOffer = dealCheckRequest.Main.Offer;
+            HotelData = TTIHotelService.GetHotels(dealCheckRequest.Criteria.TtiCode).FirstOrDefault();
+            Criteria = dealCheckRequest.Criteria;
 
         }
 
