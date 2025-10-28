@@ -1,7 +1,6 @@
 ﻿using CPUK.BusinessLogic.Services;
 using CPUK.DataAccess;
-using CPUK.DataAccess.Repositories;
-using CPUK.Domain.Data;
+using CPUK.DataAccess.Repositories; 
 using CPUK.Domain.Entities.Company;
 using CPUK.Domain.Entities.DealCheck;
 using MongoDB.Driver.Linq;
@@ -19,7 +18,7 @@ namespace CPUK.DealCheckProcessor.App.Service
     {
         private readonly DealCheckService dealCheckService = new DealCheckService();
         private readonly DealCheckRepository dealCheckRepository = new DealCheckRepository();
-        private readonly BusinessLogic.Services.DealCheckProcessingService dealCheckProcessingService = new BusinessLogic.Services.DealCheckProcessingService();
+        private readonly BusinessLogic.DealCheckProcessing.DealCheckProcessingService dealCheckProcessingService = new BusinessLogic.DealCheckProcessing.DealCheckProcessingService();
         public async Task Run()
         {
             var semaphore = new SemaphoreSlim(3);
@@ -49,7 +48,7 @@ namespace CPUK.DealCheckProcessor.App.Service
 
                 foreach (var company in StaticDataHolder.Company)
                 {
-                    if (company.Id == CompanyId.BookingCom) continue;//skip booking.com temporarily
+                    //if (company.Id == CompanyId.BookingCom) continue;//skip booking.com temporarily
 
                     await semaphore.WaitAsync();
                     taskList.Add(TryProduceCompetitors(dealCheckRequest, company).ContinueWith(ct => { semaphore.Release(); return ct.Result; }));
