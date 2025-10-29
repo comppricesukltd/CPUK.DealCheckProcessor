@@ -45,28 +45,26 @@ namespace CPUK.DealCheckProcessor.App.Service
         private readonly TTIHotelService TTIHotelService = new TTIHotelService();
 
         private readonly string PhoneNumber;
-        private readonly TTIHotel HotelData;
-        private readonly DealCheckCriteria Criteria;
-
-        private readonly int DealCheckRequestId;
-        private readonly int UserId;
+        private readonly TTIHotel HotelData; 
+        private readonly DealCheckRequest DealCheckRequest;
         private readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
 
         private Task messagingTask;
         private CancellationToken CancellationToken => CancellationTokenSource.Token;
-        public Lazy<BoundsRange<DateTime>> DateRange => new Lazy<BoundsRange<DateTime>>(() => new BoundsRange<DateTime>(Criteria.DepartureDate.Value, Criteria.DepartureDate.Value.AddDays(Criteria.Duration.Value)));
+        public Lazy<BoundsRange<DateTime>> DateRange => new Lazy<BoundsRange<DateTime>>(() => new BoundsRange<DateTime>(DealCheckRequest.Criteria.DepartureDate.Value, DealCheckRequest.Criteria.DepartureDate.Value.AddDays(DealCheckRequest.Criteria.Duration.Value)));
         public UserMessagingService(DealCheckRequest dealCheckRequest)
         {
+       
             PhoneNumber = authService.Value.GetUserPhoneNumber(dealCheckRequest.UserId);
             HotelData = TTIHotelService.GetHotels(dealCheckRequest.Criteria.TtiCode).FirstOrDefault();
-            Criteria = dealCheckRequest.Criteria;
+            DealCheckRequest = dealCheckRequest;
 
         }
 
         private string GetLinkForDealCheckRequest()
-            => shortLinkService.CreatShortLink(new ShortLinkBuilder($"https://anybetter.com/results/{DealCheckRequestId}",
+            => shortLinkService.CreatShortLink(new ShortLinkBuilder($"https://anybetter.com/results/{DealCheckRequest.Id}",
                 new Dictionary<string, string> {
-                    { MagicLinkService.QP_KEY, magicLinkService.CreateMagicLinkToken(UserId).ToString().ToLower() },
+                    { MagicLinkService.QP_KEY, magicLinkService.CreateMagicLinkToken(DealCheckRequest.UserId).ToString().ToLower() },
                     { "code", "hesoyam" }
             }));
 
