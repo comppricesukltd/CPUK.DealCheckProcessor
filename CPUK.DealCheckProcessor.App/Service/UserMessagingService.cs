@@ -106,7 +106,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                     $"Hi {Emoji.WavingHandSign} we’ve got your request for *{HotelData.Name}* in {Emoji.RoundPushpin}*{HotelData.Country}, {HotelData.Locale}, {HotelData.City}* ({DateRange.Value.LeftBound:d-MMM-yy} → {DateRange.Value.RightBound:d-MMM-yy}).\n" +
                     "\n" +
                     $"We’re now checking {Emoji.Airplane} flights, {Emoji.Bed} rooms, and {Emoji.ForkAndKnife} meal plans across trusted operators.\n" +
-                    $"Hang tight {Emoji.HourglassWithFlowingSand} - I’ll keep you posted and send your full results link her", out _);
+                    $"Hang tight {Emoji.HourglassWithFlowingSand} - I’ll keep you posted and send your full results link here", out _);
 
                 //step 2: Wait 30s
                 await Task.Delay(TimeSpan.FromSeconds(30), CancellationToken);
