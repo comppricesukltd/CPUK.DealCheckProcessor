@@ -84,6 +84,10 @@ namespace CPUK.DealCheckProcessor.App.Service
 
                 }
             }
+            else
+            {
+                dealCheckRepository.WriteDealCheckRequestFailed(request.Id);
+            }
         }
         public async Task<DealCheckCriteria> ProduceCriteria(DealCheckRequestFull request)
         {
