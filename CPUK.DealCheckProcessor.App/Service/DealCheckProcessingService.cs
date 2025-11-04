@@ -182,10 +182,10 @@ namespace CPUK.DealCheckProcessor.App.Service
                     await semaphore.WaitAsync();
                     taskList.Add(TryProduceCompetitors(dealCheckRequest, company).ContinueWith(ct => { semaphore.Release(); return ct.Result; }));
                 }
-                
-                
+
+
                 bool anyCompetitorSet = false;
-                try { anyCompetitorSet = (await Task.WhenAll(taskList)).Any(); } catch { }
+                try { anyCompetitorSet = (await Task.WhenAll(taskList)).Any(x => x); } catch { }
 
                 if (anyCompetitorSet)
                 {
@@ -201,6 +201,10 @@ namespace CPUK.DealCheckProcessor.App.Service
                     finally { semaphore.Release(); }
 
                     dealCheckRepository.WriteDealCheckRequestCompleted(dealCheckRequest.Id);
+                }
+                else
+                {
+                    dealCheckRepository.WriteDealCheckRequestFailed(dealCheckRequest.Id);
                 }
 
 
