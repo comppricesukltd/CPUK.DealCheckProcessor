@@ -45,7 +45,7 @@ namespace CPUK.DealCheckProcessor.App.Service
         private readonly TTIHotelService TTIHotelService = new TTIHotelService();
 
         private readonly string PhoneNumber;
-        private readonly TTIHotel HotelData; 
+        private readonly TTIHotel HotelData;
         private readonly DealCheckRequest DealCheckRequest;
         private readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
 
@@ -54,7 +54,7 @@ namespace CPUK.DealCheckProcessor.App.Service
         public Lazy<BoundsRange<DateTime>> DateRange => new Lazy<BoundsRange<DateTime>>(() => new BoundsRange<DateTime>(DealCheckRequest.Criteria.DepartureDate.Value, DealCheckRequest.Criteria.DepartureDate.Value.AddDays(DealCheckRequest.Criteria.Duration.Value)));
         public UserMessagingService(DealCheckRequest dealCheckRequest)
         {
-       
+
             PhoneNumber = authService.Value.GetUserPhoneNumber(dealCheckRequest.UserId);
             HotelData = TTIHotelService.GetHotels(dealCheckRequest.Criteria.TtiCode).FirstOrDefault();
             DealCheckRequest = dealCheckRequest;
@@ -87,7 +87,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                 try { messagingTask?.Wait(); } catch { }
             }
         }
-        public void StartUserMessaging()
+        public void StartUserMessaging(Task<bool> HasDeals)
             => messagingTask = Task.Run(async () =>
             {
                 if (!TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
@@ -126,12 +126,11 @@ namespace CPUK.DealCheckProcessor.App.Service
                         GetReviewSnipper(review1), out _);
 
 
+                    var hasDeals = await HasDeals;
                     //Checking if there is second review
-                    if (review2 != null)
+                    if (hasDeals && review2 != null)
                     {
                         //step 4: Wait 90s
-                        await Task.Delay(TimeSpan.FromSeconds(90), CancellationToken);
-
                         //If competitors processing is done => cancel messaging 
                         await CheckCSWindowOpenOrWait();
 

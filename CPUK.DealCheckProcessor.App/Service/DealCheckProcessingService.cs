@@ -171,8 +171,17 @@ namespace CPUK.DealCheckProcessor.App.Service
             try
             {
 
+                var anyCompetitorSet = false;
+                var mainProcessingCompleted = new ManualResetEventSlim(false);
+
+                var hasDealsTask = Task.Run(() =>
+                {
+                    mainProcessingCompleted.Wait();
+                    return anyCompetitorSet;
+                });
+
                 var messagingService = new UserMessagingService(dealCheckRequest);
-                messagingService.StartUserMessaging();
+                messagingService.StartUserMessaging(hasDealsTask);
 
 
                 foreach (var company in StaticDataHolder.Company)
@@ -184,8 +193,8 @@ namespace CPUK.DealCheckProcessor.App.Service
                 }
 
 
-                bool anyCompetitorSet = false;
                 try { anyCompetitorSet = (await Task.WhenAll(taskList)).Any(x => x); } catch { }
+                mainProcessingCompleted.Set();
 
                 if (anyCompetitorSet)
                 {
