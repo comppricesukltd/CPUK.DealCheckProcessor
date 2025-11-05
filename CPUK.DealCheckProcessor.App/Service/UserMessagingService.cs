@@ -94,12 +94,9 @@ namespace CPUK.DealCheckProcessor.App.Service
                 {
                     //step 0: Aknowledge. Ask permission for sending messages
                     TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeTemplateSid);
-
                 }
 
-
                 await CheckCSWindowOpenOrWait();
-
 
                 //step 1: Send initial message
                 TwilioService.SendWhatsappMessage(PhoneNumber,

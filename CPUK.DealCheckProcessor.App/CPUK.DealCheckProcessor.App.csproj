@@ -80,22 +80,22 @@
       <HintPath>..\packages\CPUK.ConfigurationSettings.0.0.0.16\lib\CPUK.ConfigurationSettings.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.DataAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.DataAccess.0.0.0.72\lib\CPUK.DataAccess.dll</HintPath>
+      <HintPath>..\packages\CPUK.DataAccess.0.0.0.73\lib\CPUK.DataAccess.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.Domain.0.0.0.70\lib\CPUK.Domain.dll</HintPath>
+      <HintPath>..\packages\CPUK.Domain.0.0.0.71\lib\CPUK.Domain.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.ExternalCommunication, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CPUK.ExternalCommunication.0.0.0.7\lib\CPUK.ExternalCommunication.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.Utility, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.Utility.0.0.0.13\lib\CPUK.Utility.dll</HintPath>
+      <HintPath>..\packages\CPUK.Utility.0.0.0.15\lib\CPUK.Utility.dll</HintPath>
     </Reference>
     <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dapper.2.1.66\lib\net461\Dapper.dll</HintPath>
     </Reference>
     <Reference Include="deviceatlas-cloud-client-framework-2.5, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.Utility.0.0.0.13\lib\deviceatlas-cloud-client-framework-2.5.dll</HintPath>
+      <HintPath>..\packages\CPUK.Utility.0.0.0.15\lib\deviceatlas-cloud-client-framework-2.5.dll</HintPath>
     </Reference>
     <Reference Include="DnsClient, Version=1.6.1.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
       <HintPath>..\packages\DnsClient.1.6.1\lib\net471\DnsClient.dll</HintPath>
@@ -130,8 +130,8 @@
     <Reference Include="Microsoft.Bcl.TimeProvider, Version=8.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.TimeProvider.8.0.1\lib\net462\Microsoft.Bcl.TimeProvider.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.2.1.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\lib\net461\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Abstractions, Version=8.3.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IdentityModel.Abstractions.8.3.1\lib\net472\Microsoft.IdentityModel.Abstractions.dll</HintPath>
@@ -172,6 +172,9 @@
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
+    <Reference Include="Pipelines.Sockets.Unofficial, Version=1.0.0.0, Culture=neutral, PublicKeyToken=42ea0a778e13fbe2, processorArchitecture=MSIL">
+      <HintPath>..\packages\Pipelines.Sockets.Unofficial.2.2.8\lib\net472\Pipelines.Sockets.Unofficial.dll</HintPath>
+    </Reference>
     <Reference Include="SharpCompress, Version=0.30.1.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpCompress.0.30.1\lib\net461\SharpCompress.dll</HintPath>
     </Reference>
@@ -180,6 +183,9 @@
     </Reference>
     <Reference Include="Snappier, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a1b25124e6e13a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Snappier.1.0.0\lib\netstandard2.0\Snappier.dll</HintPath>
+    </Reference>
+    <Reference Include="StackExchange.Redis, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c219ff1ca8c2ce46, processorArchitecture=MSIL">
+      <HintPath>..\packages\StackExchange.Redis.2.9.17\lib\net472\StackExchange.Redis.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -200,6 +206,14 @@
       <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Pipelines, Version=5.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Pipelines.5.0.1\lib\net461\System.IO.Pipelines.dll</HintPath>
     </Reference>
     <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
@@ -262,6 +276,9 @@
     <Reference Include="System.Text.Json, Version=8.0.0.5, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Text.Json.8.0.5\lib\net462\System.Text.Json.dll</HintPath>
     </Reference>
+    <Reference Include="System.Threading.Channels, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Channels.5.0.0\lib\net461\System.Threading.Channels.dll</HintPath>
+    </Reference>
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
@@ -315,11 +332,11 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
     <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
-    <Error Condition="!Exists('..\packages\CPUK.Utility.0.0.0.13\build\CPUK.Utility.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CPUK.Utility.0.0.0.13\build\CPUK.Utility.targets'))" />
     <Error Condition="!Exists('..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets'))" />
+    <Error Condition="!Exists('..\packages\CPUK.Utility.0.0.0.15\build\CPUK.Utility.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CPUK.Utility.0.0.0.15\build\CPUK.Utility.targets'))" />
   </Target>
   <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
-  <Import Project="..\packages\CPUK.Utility.0.0.0.13\build\CPUK.Utility.targets" Condition="Exists('..\packages\CPUK.Utility.0.0.0.13\build\CPUK.Utility.targets')" />
   <Import Project="..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets" Condition="Exists('..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets')" />
   <UsingTask TaskName="Zip" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
@@ -368,4 +385,6 @@
     <FtpCreateRemoteDirectory Condition="!$(Exists)" ServerHost="$(FtpServer)" Port="$(FtpPort)" Username="$(FtpUsername)" Password="$(FtpPassword)" RemoteDirectory="$(FtpRemoteRoot)$(MSBuildProjectName)/%(MyAssemblyIdentities.Version)" />
     <FtpUploadDirectoryContent ServerHost="$(FtpServer)" Port="$(FtpPort)" Username="$(FtpUsername)" Password="$(FtpPassword)" LocalDirectory="Builds\%(MyAssemblyIdentities.Version)\" RemoteDirectory="$(FtpRemoteRoot)$(MSBuildProjectName)/%(MyAssemblyIdentities.Version)" Recursive="true" />
   </Target>
+  <Import Project="..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets" Condition="Exists('..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets')" />
+  <Import Project="..\packages\CPUK.Utility.0.0.0.15\build\CPUK.Utility.targets" Condition="Exists('..\packages\CPUK.Utility.0.0.0.15\build\CPUK.Utility.targets')" />
 </Project>
