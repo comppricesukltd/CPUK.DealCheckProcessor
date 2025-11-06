@@ -68,13 +68,13 @@
       <HintPath>..\packages\AWSSDK.S3.4.0.7.2\lib\net472\AWSSDK.S3.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.Authorization, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.Authorization.0.0.0.7\lib\CPUK.Authorization.dll</HintPath>
+      <HintPath>..\packages\CPUK.Authorization.0.0.0.8\lib\CPUK.Authorization.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.Authorization.DataAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CPUK.Authorization.DataAccess.0.0.0.1\lib\CPUK.Authorization.DataAccess.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.BusinessLogic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.BusinessLogic.0.0.1.49\lib\CPUK.BusinessLogic.dll</HintPath>
+      <HintPath>..\packages\CPUK.BusinessLogic.0.0.1.50\lib\CPUK.BusinessLogic.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.ConfigurationSettings, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CPUK.ConfigurationSettings.0.0.0.16\lib\CPUK.ConfigurationSettings.dll</HintPath>
