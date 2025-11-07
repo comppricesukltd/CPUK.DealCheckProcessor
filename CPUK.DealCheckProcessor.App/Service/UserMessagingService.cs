@@ -1,4 +1,5 @@
-﻿using CPUK.Authorization.DataAccess.Context;
+﻿using Amazon.Runtime.Internal.Transform;
+using CPUK.Authorization.DataAccess.Context;
 using CPUK.Authorization.Service;
 using CPUK.BusinessLogic.Services;
 using CPUK.Domain.Entities.DealCheck;
@@ -93,7 +94,11 @@ namespace CPUK.DealCheckProcessor.App.Service
                 if (!TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
                 {
                     //step 0: Aknowledge. Ask permission for sending messages
-                    TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeTemplateSid);
+                    TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeTemplateSid, new Dictionary<string, string>
+                    {
+                        { "hotel_name",HotelData.Name },
+                        { "destination",$"{HotelData.Country}, {HotelData.Locale}, {HotelData.City}" }
+                    });
                 }
 
                 await CheckCSWindowOpenOrWait();
@@ -107,14 +112,14 @@ namespace CPUK.DealCheckProcessor.App.Service
 
                 //step 2: Wait 30s
                 await Task.Delay(TimeSpan.FromSeconds(30), CancellationToken);
-
+                var validReviews = HotelData.ReviewList.Where(x => x.Rating >= 4).ToList();
 
 
                 //If has reviews - lets send them
-                if (HotelData.ReviewList.Any())
+                if (validReviews.Any())
                 {
-                    var review1 = HotelData.ReviewList.ElementAtOrDefault(0);
-                    var review2 = HotelData.ReviewList.ElementAtOrDefault(1);
+                    var review1 = validReviews.ElementAtOrDefault(0);
+                    var review2 = validReviews.ElementAtOrDefault(1);
 
                     await CheckCSWindowOpenOrWait();
 
