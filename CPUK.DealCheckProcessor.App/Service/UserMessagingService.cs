@@ -62,16 +62,16 @@ namespace CPUK.DealCheckProcessor.App.Service
 
         }
 
-        private static string GetLinkForDealCheckRequest(int requestId, int userId, string phoneNumber)
+        private static string GetLinkForDealCheckRequest(int requestId, int userId, string phoneNumber, bool drillPage = true)
                 //=> shortLinkService.CreatShortLink(new ShortLinkBuilder($"http://localhost:4200/results/{requestId}",
-                => shortLinkService.CreatShortLink(new ShortLinkBuilder($"https://anybetter.com/results/{requestId}",
+                => shortLinkService.CreatShortLink(new ShortLinkBuilder($"https://anybetter.com/results{(drillPage ? $"/{requestId}" : string.Empty)}",
                 new Dictionary<string, string> {
                     { MagicLinkService.QP_KEY, magicLinkService.CreateMagicLinkToken(userId).ToString().ToLower() },
                     { "phoneNumber", phoneNumber },
                     { "code", "hesoyam" }
             }));
-        private string GetLinkForDealCheckRequest()
-            => GetLinkForDealCheckRequest(DealCheckRequest.Id, DealCheckRequest.UserId, PhoneNumber);
+        private string GetLinkForDealCheckRequest(bool drillPage = true)
+            => GetLinkForDealCheckRequest(DealCheckRequest.Id, DealCheckRequest.UserId, PhoneNumber, drillPage);
 
         public static void TestMLMessage(int userId, int requestId, string phoneNumber)
         {
@@ -206,7 +206,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                 TwilioService.SendWhatsappMessage(PhoneNumber,
                     $"We need a little more info before we can start searching for your best deals {Emoji.LowerRightPencil}\n" +
                     $"It’ll only take a second - see what we need here {Emoji.WhiteRightPointingBackhandIndex}{Emoji.LeftPointingMagnifyingGlass}" +
-                    $"{GetLinkForDealCheckRequest()}", out _);
+                    $"{GetLinkForDealCheckRequest(false)}", out _);
                 return true;
             }
         }
