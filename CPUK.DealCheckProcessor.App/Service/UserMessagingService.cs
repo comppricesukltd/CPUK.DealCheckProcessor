@@ -40,8 +40,8 @@ namespace CPUK.DealCheckProcessor.App.Service
 
         }
 
-        private readonly MagicLinkService magicLinkService = new MagicLinkService();
-        private readonly ShortLinkService shortLinkService = new ShortLinkService();
+        private static readonly MagicLinkService magicLinkService = new MagicLinkService();
+        private static readonly ShortLinkService shortLinkService = new ShortLinkService();
         private readonly Lazy<AuthService> authService = new Lazy<AuthService>(() => new AuthService(new SigninDbContext()));
         private readonly TTIHotelService TTIHotelService = new TTIHotelService();
 
@@ -62,13 +62,23 @@ namespace CPUK.DealCheckProcessor.App.Service
 
         }
 
-        private string GetLinkForDealCheckRequest()
-            => shortLinkService.CreatShortLink(new ShortLinkBuilder($"https://anybetter.com/results/{DealCheckRequest.Id}",
+        private static string GetLinkForDealCheckRequest(int requestId, int userId, string phoneNumber)
+                //=> shortLinkService.CreatShortLink(new ShortLinkBuilder($"http://localhost:4200/results/{requestId}",
+                => shortLinkService.CreatShortLink(new ShortLinkBuilder($"https://anybetter.com/results/{requestId}",
                 new Dictionary<string, string> {
-                    { MagicLinkService.QP_KEY, magicLinkService.CreateMagicLinkToken(DealCheckRequest.UserId).ToString().ToLower() },
+                    { MagicLinkService.QP_KEY, magicLinkService.CreateMagicLinkToken(userId).ToString().ToLower() },
+                    { "phoneNumber", phoneNumber },
                     { "code", "hesoyam" }
             }));
+        private string GetLinkForDealCheckRequest()
+            => GetLinkForDealCheckRequest(DealCheckRequest.Id, DealCheckRequest.UserId, PhoneNumber);
 
+        public static void TestMLMessage(int userId, int requestId, string phoneNumber)
+        {
+            var magicLink = GetLinkForDealCheckRequest(requestId, userId, phoneNumber);
+
+            TwilioService.SendWhatsappMessage(phoneNumber, $"Hey! Test link is there:\n{magicLink}", out _);
+        }
         public void SendCompletedNotification()
             => TwilioService.SendWhatsappMessage(PhoneNumber,
                 $"{Emoji.Sparklestar} All done!\n" +

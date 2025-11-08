@@ -15,6 +15,8 @@ namespace CPUK.DealCheckProcessor.App
 #if DEBUG
                 //args = new[] { "-nudge" };
                 args = new[] { "-competitor" };
+                //UserMessagingService.TestMLMessage(7, 4, "447802739830");
+                //UserMessagingService.TestMLMessage(2, 1, "380663345436");
 #endif
                 if (args.ElementAtOrDefault(0) == "-competitor" || args.Length == 0)
                     await new DealCheckProcessingService().Run();
