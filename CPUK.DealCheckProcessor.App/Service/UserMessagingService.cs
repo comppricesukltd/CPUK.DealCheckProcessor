@@ -62,18 +62,18 @@ namespace CPUK.DealCheckProcessor.App.Service
 
         }
 
-        private static string GetLinkForDealCheckRequest(int requestId, int userId, string phoneNumber, bool drillPage = true)
+        private static string GetLinkForDealCheckRequest(Guid requestId, int userId, string phoneNumber, bool drillPage = true)
                 //=> shortLinkService.CreatShortLink(new ShortLinkBuilder($"http://localhost:4200/results/{requestId}",
-                => shortLinkService.CreatShortLink(new ShortLinkBuilder($"https://anybetter.com/results{(drillPage ? $"/{requestId}" : string.Empty)}",
+                => shortLinkService.CreatShortLink(new ShortLinkBuilder($"https://anybetter.com/results{(drillPage ? $"/{requestId.ToString().ToLower()}" : string.Empty)}",
                 new Dictionary<string, string> {
                     { MagicLinkService.QP_KEY, magicLinkService.CreateMagicLinkToken(userId).ToString().ToLower() },
                     { "phoneNumber", phoneNumber },
                     { "code", "hesoyam" }
             }));
         private string GetLinkForDealCheckRequest(bool drillPage = true)
-            => GetLinkForDealCheckRequest(DealCheckRequest.Id, DealCheckRequest.UserId, PhoneNumber, drillPage);
+            => GetLinkForDealCheckRequest(DealCheckRequest.DisplayId, DealCheckRequest.UserId, PhoneNumber, drillPage);
 
-        public static void TestMLMessage(int userId, int requestId, string phoneNumber)
+        public static void TestMLMessage(int userId, Guid requestId, string phoneNumber)
         {
             var magicLink = GetLinkForDealCheckRequest(requestId, userId, phoneNumber);
 
@@ -179,36 +179,55 @@ namespace CPUK.DealCheckProcessor.App.Service
 
         public bool SendNudgeMessage()
         {
-            if (!TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
-            {
-                TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeGenericTemplateSid);
-                return false;
-            }
-            else
+            //if (!TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
+            //{
+            //    TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeGenericTemplateSid);
+            //    return false;
+            //}
+            //else
+            //{
+            //    TwilioService.SendWhatsappMessage(PhoneNumber,
+            //        $"Just a reminder - your {HotelData.Name} results are ready {Emoji.WhiteHeavyCheckMark}\n" +
+            //        $"Open them here: {GetLinkForDealCheckRequest()}", out _);
+            //    return true;
+            //}
+
+
+            if (TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
             {
                 TwilioService.SendWhatsappMessage(PhoneNumber,
-                    $"Just a reminder - your {HotelData.Name} results are ready {Emoji.WhiteHeavyCheckMark}\n" +
-                    $"Open them here: {GetLinkForDealCheckRequest()}", out _);
-                return true;
+                      $"Just a reminder - your {HotelData.Name} results are ready {Emoji.WhiteHeavyCheckMark}\n" +
+                      $"Open them here: {GetLinkForDealCheckRequest()}", out _);
             }
+            return true;
         }
 
         public bool SendNudgeMessage_clarification()
         {
 
-            if (!TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
-            {
-                TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeGenericTemplateSid);
-                return false;
-            }
-            else
+            //if (!TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
+            //{
+            //    TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeGenericTemplateSid);
+            //    return false;
+            //}
+            //else
+            //{
+            //    TwilioService.SendWhatsappMessage(PhoneNumber,
+            //        $"We need a little more info before we can start searching for your best deals {Emoji.LowerRightPencil}\n" +
+            //        $"It’ll only take a second - see what we need here {Emoji.WhiteRightPointingBackhandIndex}{Emoji.LeftPointingMagnifyingGlass}" +
+            //        $"{GetLinkForDealCheckRequest(false)}", out _);
+            //    return true;
+            //}
+
+
+            if (TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
             {
                 TwilioService.SendWhatsappMessage(PhoneNumber,
-                    $"We need a little more info before we can start searching for your best deals {Emoji.LowerRightPencil}\n" +
-                    $"It’ll only take a second - see what we need here {Emoji.WhiteRightPointingBackhandIndex}{Emoji.LeftPointingMagnifyingGlass}" +
-                    $"{GetLinkForDealCheckRequest(false)}", out _);
-                return true;
+                   $"We need a little more info before we can start searching for your best deals {Emoji.LowerRightPencil}\n" +
+                   $"It’ll only take a second - see what we need here {Emoji.WhiteRightPointingBackhandIndex}{Emoji.LeftPointingMagnifyingGlass}" +
+                   $"{GetLinkForDealCheckRequest(false)}", out _);
             }
+            return true;
         }
     }
 }
