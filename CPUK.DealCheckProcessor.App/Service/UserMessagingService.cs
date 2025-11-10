@@ -121,7 +121,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                     $"Hang tight {Emoji.HourglassWithFlowingSand} - I’ll keep you posted and send your full results link here", out _);
 
                 //step 2: Wait 30s
-                await Task.Delay(TimeSpan.FromSeconds(30), CancellationToken);
+                await Task.Delay(TimeSpan.FromMinutes(2), CancellationToken);
                 var validReviews = HotelData.ReviewList.Where(x => x.Rating >= 4).ToList();
 
 
