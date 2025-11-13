@@ -29,9 +29,15 @@ namespace CPUK.DealCheckProcessor.App.Service
         private readonly OCRFromImageService ocrFromImageService = new OCRFromImageService();
         private readonly DealCheckService dealCheckService = new DealCheckService();
         private readonly S3FileService s3FileService = new S3FileService();
+        private readonly InsuranceExtractionService insuranceExtractionService = new InsuranceExtractionService();
 
+        public async Task Test()
+        {
+            var dealCheck = dealCheckRepository.GetDealCheckRequestViaDisplayId(9, new Guid("16ece941-9e14-4565-b2fc-c89d26a9127b"));
+            var ss_inner = new SemaphoreSlim(3);
+            await ProduceInsurance(dealCheck, ss_inner);
 
-
+        }
 
         public async Task Run()
         {
@@ -49,14 +55,38 @@ namespace CPUK.DealCheckProcessor.App.Service
                 {
                     try
                     {
-                        if (dealCheck.Criteria == null) await ProduceCriteria(dealCheck, ss_inner);
-                        if (dealCheck.Criteria?.IsComplete ?? false) await ProduceCompetitors(dealCheck, ss_inner);
+                        if (dealCheck.Criteria == null)
+                        {
+                            await ProduceCriteria(dealCheck, ss_inner);
+                        }
+                        if (dealCheck.Criteria?.IsComplete ?? false)
+                        {
+                            await ProduceCompetitors(dealCheck, ss_inner);
+                            await ProduceInsurance(dealCheck, ss_inner);
+                        }
+
                     }
                     finally { ss_outter.Release(); }
                 }));
             }
 
             if (taskList.Any()) await Task.WhenAll(taskList);
+        }
+
+        private async Task ProduceInsurance(DealCheckRequestFull dealCheck, SemaphoreSlim ss_inner)
+        {
+            await ss_inner.WaitAsync();
+            try
+            {
+                var insuranceOffers = await insuranceExtractionService.ExtractInsuranceForCriteria(dealCheck.Criteria);
+                if (insuranceOffers != null && insuranceOffers.Any())
+                {
+                    dealCheckRepository.WriteDealCheckInsurance(dealCheck.Id, insuranceOffers);
+                }
+            }
+            catch { }
+            finally { ss_inner.Release(); }
+
         }
 
         private readonly OpenAIImageDealImageDetectionService OpenAIImageDealImageDetectionService = new OpenAIImageDealImageDetectionService();
