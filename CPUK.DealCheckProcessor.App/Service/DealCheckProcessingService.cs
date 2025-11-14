@@ -33,7 +33,7 @@ namespace CPUK.DealCheckProcessor.App.Service
 
         public async Task Test()
         {
-            var dealCheck = dealCheckRepository.GetDealCheckRequestViaDisplayId(9, new Guid("16ece941-9e14-4565-b2fc-c89d26a9127b"));
+            var dealCheck = dealCheckRepository.GetDealCheckRequestViaDisplayId(9, new Guid("8107c958-1703-4585-8740-320bbffcea7c"));
             var ss_inner = new SemaphoreSlim(3);
             await ProduceInsurance(dealCheck, ss_inner);
 
@@ -228,8 +228,6 @@ namespace CPUK.DealCheckProcessor.App.Service
 
                 if (anyCompetitorSet)
                 {
-                    //refresh to get offers built with other companies
-                    dealCheckRequest = dealCheckService.GetDealCheckRequestFull(dealCheckRequest.UserId, dealCheckRequest.Id);
 
                     try
                     {
@@ -238,6 +236,11 @@ namespace CPUK.DealCheckProcessor.App.Service
                         await TryProduceCompetitors(dealCheckRequest, bookingCom);
                     }
                     finally { semaphore.Release(); }
+
+                    foreach (var companyGroup in dealCheckRequest.OfferList.GroupBy(x => x.CompanyId))
+                    {
+                        dealCheckService.WriteDealCheckOffer(dealCheckRequest.Id, companyGroup.Key, companyGroup.ToList());
+                    }
 
                     dealCheckRepository.WriteDealCheckRequestCompleted(dealCheckRequest.Id);
                 }
@@ -267,10 +270,14 @@ namespace CPUK.DealCheckProcessor.App.Service
                 Console.WriteLine($"Start[{dealCheckRequest.Id}][{company.Name}]");
 
                 var offerList = await dealCheckProcessingService.GetOfferList(dealCheckRequest, company.Id);
-                offersCount = offerList?.Count ?? 0;
-
-                if (IsCompetitorSet = offerList?.Any() ?? false)
-                    dealCheckService.WriteDealCheckOffer(dealCheckRequest.Id, company.Id, offerList);
+                if (offerList?.Any() ?? false)
+                {
+                    dealCheckRequest.OfferList = dealCheckRequest.OfferList ?? new List<DealCheckOffer>();
+                    dealCheckRequest.OfferList.AddRange(offerList);
+                    offersCount = offerList?.Count ?? 0;
+                    IsCompetitorSet = true;
+                }
+              
             }
             catch { }
             stopwatch.Stop();

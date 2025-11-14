@@ -1,14 +1,18 @@
 ﻿using CPUK.BusinessLogic.Services;
 using CPUK.DataAccess.Repositories;
+using CPUK.DataAccess.SharedDataStorage.Mongo.Common;
 using CPUK.Domain.Entities.DealCheck;
 using CPUK.Domain.Entities.Hotel;
+using CPUK.Domain.Entities.MongoDocument;
 using CPUK.Domain.Entities.Proxy;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using static CPUK.BusinessLogic.Services.CompanyScriptExecutor;
+using static CPUK.ConfigurationSettings.Settings.DataBase.MongoDB;
 
 namespace CPUK.DealCheckProcessor.App.Service
 {
@@ -33,8 +37,26 @@ namespace CPUK.DealCheckProcessor.App.Service
                 { "RTN_DATE", $"{criteria.DepartureDate.Value.AddDays(criteria.Duration.Value):dd/MM/yyyy}"},
                 { "COUNTRY", hotel.Country}
             };
-            var result = await ExecuteRemoteScriptFull("run", @params, Transformers.AsObject<List<DealCheckInsurance_RawRow>>);
+            var cacheKey = string.Join("_", @params.Select(x => $"{x.Key}:{x.Value}"));
+             
+            var cahceRecord = DealCheckInsuranceCacheStore.Value.Get(cacheKey);
+            if (cahceRecord?.Data?.Any() ?? false)
+            {
+                return cahceRecord.Data;
+            }
+            else
+            {
+                var data = await GetRealtimeData(@params);
+                DealCheckInsuranceCacheStore.Value.Set(new DealCheckInsuranceCacheRow(cacheKey, data));
 
+                return data;
+            }
+
+        }
+
+        private static async Task<List<DealCheckInsurance>> GetRealtimeData(Dictionary<string, string> @params)
+        {
+            var result = await ExecuteRemoteScriptFull("run", @params, Transformers.AsObject<List<DealCheckInsurance_RawRow>>);
             return result.Select(x =>
             {
                 try { return x.Map(); }
@@ -42,6 +64,29 @@ namespace CPUK.DealCheckProcessor.App.Service
             }).Where(x => x != null).ToList();
         }
 
+        private readonly Lazy<MongoDBRTCDataStorageExpireable<string, DealCheckInsuranceCacheRow>> DealCheckInsuranceCacheStore
+            = new Lazy<MongoDBRTCDataStorageExpireable<string, DealCheckInsuranceCacheRow>>(() =>
+            {
+                var instance = new MongoDBRTCDataStorageExpireable<string, DealCheckInsuranceCacheRow>(MongoDBInstance.MAIN, "deal_check", "InsuranceCache");
+                instance.CreateZeroTTLIndexIfNotExists();
+                return instance;
+            });
+
+
+    }
+
+    public class DealCheckInsuranceCacheRow : IExpirableMongoDocument<string>
+    {
+        public string Id { get; set; }
+        public DateTime ExpireAt { get; set; }
+        public List<DealCheckInsurance> Data { get; set; }
+        public DealCheckInsuranceCacheRow() { }
+        public DealCheckInsuranceCacheRow(string id, List<DealCheckInsurance> data)
+        {
+            Id = id;
+            Data = data;
+            ExpireAt = DateTime.UtcNow.AddDays(1);
+        }
     }
 
     public class DealCheckInsurance_RawRow
