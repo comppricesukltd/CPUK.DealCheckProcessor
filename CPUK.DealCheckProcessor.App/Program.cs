@@ -18,7 +18,7 @@ namespace CPUK.DealCheckProcessor.App
                 //UserMessagingService.TestMLMessage(7, 4, "447802739830");
                 //UserMessagingService.TestMLMessage(2, 1, "380663345436");
 
-                //await new DealCheckProcessingService().Test();
+                await new DealCheckProcessingService().Test();
 #endif
                 if (args.ElementAtOrDefault(0) == "-competitor" || args.Length == 0)
                     await new DealCheckProcessingService().Run();

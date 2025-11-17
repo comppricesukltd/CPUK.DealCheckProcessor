@@ -30,12 +30,13 @@ namespace CPUK.DealCheckProcessor.App.Service
         private readonly DealCheckService dealCheckService = new DealCheckService();
         private readonly S3FileService s3FileService = new S3FileService();
         private readonly InsuranceExtractionService insuranceExtractionService = new InsuranceExtractionService();
+        private readonly ParkingExtrasExtractionService parkingExtrasExtractionService = new ParkingExtrasExtractionService();
 
         public async Task Test()
         {
-            var dealCheck = dealCheckRepository.GetDealCheckRequestViaDisplayId(9, new Guid("8107c958-1703-4585-8740-320bbffcea7c"));
+            var dealCheck = dealCheckRepository.GetDealCheckRequestViaDisplayId(9, new Guid("3beebbbe-a3cf-4ead-9dca-a028444ee069"));
             var ss_inner = new SemaphoreSlim(3);
-            await ProduceInsurance(dealCheck, ss_inner);
+            await ProduceExtrasParking(dealCheck, ss_inner);
 
         }
 
@@ -61,8 +62,14 @@ namespace CPUK.DealCheckProcessor.App.Service
                         }
                         if (dealCheck.Criteria?.IsComplete ?? false)
                         {
-                            await ProduceCompetitors(dealCheck, ss_inner);
-                            await ProduceInsurance(dealCheck, ss_inner);
+                            var success = await ProduceCompetitors(dealCheck, ss_inner);
+                            if (success)
+                            {
+                                await Task.WhenAll(
+                                            ProduceInsurance(dealCheck, ss_inner),
+                                            ProduceExtrasParking(dealCheck, ss_inner)
+                                    );
+                            }
                         }
 
                     }
@@ -79,9 +86,24 @@ namespace CPUK.DealCheckProcessor.App.Service
             try
             {
                 var insuranceOffers = await insuranceExtractionService.ExtractInsuranceForCriteria(dealCheck.Criteria);
-                if (insuranceOffers != null && insuranceOffers.Any())
+                if (insuranceOffers?.Any() ?? false)
                 {
                     dealCheckRepository.WriteDealCheckInsurance(dealCheck.Id, insuranceOffers);
+                }
+            }
+            catch { }
+            finally { ss_inner.Release(); }
+
+        }
+        private async Task ProduceExtrasParking(DealCheckRequestFull dealCheck, SemaphoreSlim ss_inner)
+        {
+            await ss_inner.WaitAsync();
+            try
+            {
+                var parkingProducts = await parkingExtrasExtractionService.ExtractParkingForCriteria(dealCheck.Criteria);
+                if (parkingProducts?.Any() ?? false)
+                {
+                    dealCheckRepository.WriteDealCheckExtrasParking(dealCheck.Id, parkingProducts);
                 }
             }
             catch { }
@@ -193,15 +215,15 @@ namespace CPUK.DealCheckProcessor.App.Service
 
 
         #region COMPETITORS
-        public async Task ProduceCompetitors(DealCheckRequestFull dealCheckRequest, SemaphoreSlim semaphore)
+        public async Task<bool> ProduceCompetitors(DealCheckRequestFull dealCheckRequest, SemaphoreSlim semaphore)
         {
 
 
             var taskList = new List<Task<bool>>();
+            var anyCompetitorSet = false;
             try
             {
 
-                var anyCompetitorSet = false;
                 var mainProcessingCompleted = new ManualResetEventSlim(false);
 
                 var hasDealsTask = Task.Run(() =>
@@ -258,6 +280,7 @@ namespace CPUK.DealCheckProcessor.App.Service
             {
 
             }
+            return anyCompetitorSet;
         }
 
         private async Task<bool> TryProduceCompetitors(DealCheckRequestFull dealCheckRequest, Company company)
@@ -277,7 +300,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                     offersCount = offerList?.Count ?? 0;
                     IsCompetitorSet = true;
                 }
-              
+
             }
             catch { }
             stopwatch.Stop();

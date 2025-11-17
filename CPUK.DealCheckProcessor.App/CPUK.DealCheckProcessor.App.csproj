@@ -74,16 +74,16 @@
       <HintPath>..\packages\CPUK.Authorization.DataAccess.0.0.0.1\lib\CPUK.Authorization.DataAccess.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.BusinessLogic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.BusinessLogic.0.0.1.80\lib\CPUK.BusinessLogic.dll</HintPath>
+      <HintPath>..\packages\CPUK.BusinessLogic.0.0.1.83\lib\CPUK.BusinessLogic.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.ConfigurationSettings, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CPUK.ConfigurationSettings.0.0.0.18\lib\CPUK.ConfigurationSettings.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.DataAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.DataAccess.0.0.0.92\lib\CPUK.DataAccess.dll</HintPath>
+      <HintPath>..\packages\CPUK.DataAccess.0.0.0.96\lib\CPUK.DataAccess.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.Domain.0.0.0.88\lib\CPUK.Domain.dll</HintPath>
+      <HintPath>..\packages\CPUK.Domain.0.0.0.92\lib\CPUK.Domain.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.ExternalCommunication, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CPUK.ExternalCommunication.0.0.0.7\lib\CPUK.ExternalCommunication.dll</HintPath>
@@ -299,8 +299,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\HolidayExtras\CarPark\HolidayExtras_CarParkResponse.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\ParkingExtrasExtractionService.cs" />
     <Compile Include="Service\InsuranceExtractionService.cs" />
     <Compile Include="Service\DealCheckProcessingService.cs" />
     <Compile Include="Service\ResultsReviewNudgeService.cs" />
@@ -326,6 +328,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
