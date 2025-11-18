@@ -34,7 +34,7 @@ namespace CPUK.DealCheckProcessor.App.Service
 
         public async Task Test()
         {
-            var dealCheck = dealCheckRepository.GetDealCheckRequestViaDisplayId(9, new Guid("3beebbbe-a3cf-4ead-9dca-a028444ee069"));
+            var dealCheck = dealCheckRepository.GetDealCheckRequestViaDisplayId(9, new Guid("70a5485e-d4af-47d9-bbee-dfb61b16cc7f"));
             var ss_inner = new SemaphoreSlim(3);
             await ProduceExtrasParking(dealCheck, ss_inner);
 
