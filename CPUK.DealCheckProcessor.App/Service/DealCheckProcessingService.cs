@@ -292,6 +292,10 @@ namespace CPUK.DealCheckProcessor.App.Service
             {
                 Console.WriteLine($"Start[{dealCheckRequest.Id}][{company.Name}]");
 
+                if(company.Id == CompanyId.OnTheBeach)
+                {
+
+                }
                 var offerList = await dealCheckProcessingService.GetOfferList(dealCheckRequest, company.Id);
                 if (offerList?.Any() ?? false)
                 {

@@ -68,34 +68,34 @@
       <HintPath>..\packages\AWSSDK.S3.4.0.7.2\lib\net472\AWSSDK.S3.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.Authorization, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.Authorization.0.0.0.9\lib\CPUK.Authorization.dll</HintPath>
+      <HintPath>..\packages\CPUK.Authorization.0.0.0.10\lib\CPUK.Authorization.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.Authorization.DataAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.Authorization.DataAccess.0.0.0.1\lib\CPUK.Authorization.DataAccess.dll</HintPath>
+      <HintPath>..\packages\CPUK.Authorization.DataAccess.0.0.0.2\lib\CPUK.Authorization.DataAccess.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.BusinessLogic, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.BusinessLogic.0.0.1.96\lib\CPUK.BusinessLogic.dll</HintPath>
+      <HintPath>..\packages\CPUK.BusinessLogic.0.0.2\lib\CPUK.BusinessLogic.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.ConfigurationSettings, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.ConfigurationSettings.0.0.0.18\lib\CPUK.ConfigurationSettings.dll</HintPath>
+      <HintPath>..\packages\CPUK.ConfigurationSettings.0.0.0.19\lib\CPUK.ConfigurationSettings.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.DataAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.DataAccess.0.0.1.7\lib\CPUK.DataAccess.dll</HintPath>
+      <HintPath>..\packages\CPUK.DataAccess.0.0.1.8\lib\CPUK.DataAccess.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.Domain.0.0.1.10\lib\CPUK.Domain.dll</HintPath>
+      <HintPath>..\packages\CPUK.Domain.0.0.1.11\lib\CPUK.Domain.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.ExternalCommunication, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.ExternalCommunication.0.0.0.7\lib\CPUK.ExternalCommunication.dll</HintPath>
+      <HintPath>..\packages\CPUK.ExternalCommunication.0.0.0.8\lib\CPUK.ExternalCommunication.dll</HintPath>
     </Reference>
     <Reference Include="CPUK.Utility, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.Utility.0.0.0.15\lib\CPUK.Utility.dll</HintPath>
+      <HintPath>..\packages\CPUK.Utility.0.0.0.16\lib\CPUK.Utility.dll</HintPath>
     </Reference>
     <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dapper.2.1.66\lib\net461\Dapper.dll</HintPath>
     </Reference>
     <Reference Include="deviceatlas-cloud-client-framework-2.5, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CPUK.Utility.0.0.0.15\lib\deviceatlas-cloud-client-framework-2.5.dll</HintPath>
+      <HintPath>..\packages\CPUK.Utility.0.0.0.16\lib\deviceatlas-cloud-client-framework-2.5.dll</HintPath>
     </Reference>
     <Reference Include="DnsClient, Version=1.6.1.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
       <HintPath>..\packages\DnsClient.1.6.1\lib\net471\DnsClient.dll</HintPath>
@@ -338,7 +338,7 @@
     <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
     <Error Condition="!Exists('..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets'))" />
-    <Error Condition="!Exists('..\packages\CPUK.Utility.0.0.0.15\build\CPUK.Utility.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CPUK.Utility.0.0.0.15\build\CPUK.Utility.targets'))" />
+    <Error Condition="!Exists('..\packages\CPUK.Utility.0.0.0.16\build\CPUK.Utility.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CPUK.Utility.0.0.0.16\build\CPUK.Utility.targets'))" />
   </Target>
   <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
   <Import Project="..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets" Condition="Exists('..\packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets')" />
@@ -390,5 +390,5 @@
     <FtpUploadDirectoryContent ServerHost="$(FtpServer)" Port="$(FtpPort)" Username="$(FtpUsername)" Password="$(FtpPassword)" LocalDirectory="Builds\%(MyAssemblyIdentities.Version)\" RemoteDirectory="$(FtpRemoteRoot)$(MSBuildProjectName)/%(MyAssemblyIdentities.Version)" Recursive="true" />
   </Target>
   <Import Project="..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets" Condition="Exists('..\packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets')" />
-  <Import Project="..\packages\CPUK.Utility.0.0.0.15\build\CPUK.Utility.targets" Condition="Exists('..\packages\CPUK.Utility.0.0.0.15\build\CPUK.Utility.targets')" />
+  <Import Project="..\packages\CPUK.Utility.0.0.0.16\build\CPUK.Utility.targets" Condition="Exists('..\packages\CPUK.Utility.0.0.0.16\build\CPUK.Utility.targets')" />
 </Project>
