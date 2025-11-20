@@ -80,7 +80,7 @@ namespace CPUK.DealCheckProcessor.App.Service
             if (taskList.Any()) await Task.WhenAll(taskList);
         }
 
-        private async Task ProduceInsurance(DealCheckRequestFull dealCheck, SemaphoreSlim ss_inner)
+        private async Task ProduceInsurance(DealCheckRequest dealCheck, SemaphoreSlim ss_inner)
         {
             await ss_inner.WaitAsync();
             try
@@ -95,7 +95,7 @@ namespace CPUK.DealCheckProcessor.App.Service
             finally { ss_inner.Release(); }
 
         }
-        private async Task ProduceExtrasParking(DealCheckRequestFull dealCheck, SemaphoreSlim ss_inner)
+        private async Task ProduceExtrasParking(DealCheckRequest dealCheck, SemaphoreSlim ss_inner)
         {
             await ss_inner.WaitAsync();
             try
@@ -112,7 +112,7 @@ namespace CPUK.DealCheckProcessor.App.Service
         }
 
         private readonly OpenAIImageDealImageDetectionService OpenAIImageDealImageDetectionService = new OpenAIImageDealImageDetectionService();
-        public async Task ProduceCriteria(DealCheckRequestFull request, SemaphoreSlim semaphore)
+        public async Task ProduceCriteria(DealCheckRequest request, SemaphoreSlim semaphore)
         {
             await semaphore.WaitAsync();
             request.Criteria = await ProduceCriteria(request);
@@ -141,7 +141,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                 dealCheckRepository.WriteDealCheckRequestFailed(request.Id);
             }
         }
-        public async Task<DealCheckCriteria> ProduceCriteria(DealCheckRequestFull request)
+        public async Task<DealCheckCriteria> ProduceCriteria(DealCheckRequest request)
         {
             var company = StaticDataHolder.Company.FirstOrDefault(x => x.Id == request.CompanyId);
             try
@@ -175,10 +175,10 @@ namespace CPUK.DealCheckProcessor.App.Service
             catch { }
             return null;
         }
-        private async Task<DealCheckCriteria> ProduceCriteriaFromURL(DealCheckRequestFull request, Company company)
+        private async Task<DealCheckCriteria> ProduceCriteriaFromURL(DealCheckRequest request, Company company)
             => WriteDealcheckCriteria(request.Id, await dealCheckProcessingService.GetCriteria(company.Id, request.Url));
 
-        private async Task<DealCheckCriteria> ProduceCriteriaFromImage(DealCheckRequestFull request)
+        private async Task<DealCheckCriteria> ProduceCriteriaFromImage(DealCheckRequest request)
         {
             var (imageBytes, _) = await s3FileService.ReadObjectAsync(AWS_S3.DealCheckInputStore, $"input_image/{request.ImageId}");
             var criteria = await ocrFromImageService.TryRecognizeDealCheckOffer(request.CompanyId.Value, imageBytes);
@@ -190,7 +190,7 @@ namespace CPUK.DealCheckProcessor.App.Service
             }
             return criteria;
         }
-        private async Task<DealCheckCriteria> ProduceCriteriaFromImageNoExtractin(DealCheckRequestFull request, Company company)
+        private async Task<DealCheckCriteria> ProduceCriteriaFromImageNoExtractin(DealCheckRequest request, Company company)
         {
             var imageId = await companyScriptService.GetScreenshootCached_TempStoreImageId(company.Id, $"https://www.{company.Domain}/");
 
@@ -215,7 +215,7 @@ namespace CPUK.DealCheckProcessor.App.Service
 
 
         #region COMPETITORS
-        public async Task<bool> ProduceCompetitors(DealCheckRequestFull dealCheckRequest, SemaphoreSlim semaphore)
+        public async Task<bool> ProduceCompetitors(DealCheckRequest dealCheckRequest, SemaphoreSlim semaphore)
         {
 
 
@@ -283,7 +283,7 @@ namespace CPUK.DealCheckProcessor.App.Service
             return anyCompetitorSet;
         }
 
-        private async Task<bool> TryProduceCompetitors(DealCheckRequestFull dealCheckRequest, Company company)
+        private async Task<bool> TryProduceCompetitors(DealCheckRequest dealCheckRequest, Company company)
         {
             var IsCompetitorSet = false;
             var offersCount = 0;

@@ -86,8 +86,8 @@ namespace CPUK.DealCheckProcessor.App.Service
         }
         private static async Task<List<DealCheckExtrasParking>> GetRealtimeData(Dictionary<string, string> @params)
         {
-            var result = await ExecuteRemoteScriptFull("run", @params, Transformers.AsObject<RemoteScriptRunnerResponse<List<HolidayExtras_CarParkResponse>>>);
-            return result.data.Select(x =>
+            var (response, _) = await ExecuteRemoteScriptFull("run", @params, Transformers.AsObject<RemoteScriptRunnerResponse<List<HolidayExtras_CarParkResponse>>>);
+            return response.data.Select(x =>
             {
                 try { return x.Map(); }
                 catch { return null; }

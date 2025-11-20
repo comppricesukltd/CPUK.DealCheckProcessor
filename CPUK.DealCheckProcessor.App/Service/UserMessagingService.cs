@@ -138,7 +138,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                         $"{Emoji.RightPointingMagnifyingGlass} Still crunching the details *{HotelData.Name}*…\n" +
                         "\n" +
                         $"{Emoji.SpeechBalloon}Here’s what a recent guest had to say:\n" +
-                        GetReviewSnipper(review1), out _);
+                        GetReviewSnippet(review1), out _);
 
 
                     var hasDeals = await HasDeals;
@@ -154,7 +154,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                             $"{Emoji.GlowingStar} Good news - multiple {Emoji.Airplane}{Emoji.Bed} flight and room options are available for *{HotelData.Name}*…\n" +
                             "\n" +
                             $"{Emoji.SpeechBalloon}Another recent review:\n" +
-                            GetReviewSnipper(review2), out _);
+                            GetReviewSnippet(review2), out _);
 
                     }
 
@@ -174,7 +174,7 @@ namespace CPUK.DealCheckProcessor.App.Service
         }
 
         private static string GetRating(int rating) => string.Join("", Enumerable.Range(0, rating).Select(x => Emoji.Star));
-        private static string GetReviewSnipper(HotelReview review)
+        private static string GetReviewSnippet(HotelReview review)
             => $"{GetRating(review.Rating)} “_{review.Review}_” – {review.ReviewDateTime:d-MMM-yy}";
 
         public bool SendNudgeMessage()

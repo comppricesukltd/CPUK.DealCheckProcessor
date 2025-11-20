@@ -38,7 +38,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                 { "COUNTRY", hotel.Country}
             };
             var cacheKey = string.Join("_", @params.Select(x => $"{x.Key}:{x.Value}"));
-             
+
             var cahceRecord = DealCheckInsuranceCacheStore.Value.Get(cacheKey);
             if (cahceRecord?.Data?.Any() ?? false)
             {
@@ -56,8 +56,8 @@ namespace CPUK.DealCheckProcessor.App.Service
 
         private static async Task<List<DealCheckInsurance>> GetRealtimeData(Dictionary<string, string> @params)
         {
-            var result = await ExecuteRemoteScriptFull("run", @params, Transformers.AsObject<List<DealCheckInsurance_RawRow>>);
-            return result.Select(x =>
+            var (response, _) = await ExecuteRemoteScriptFull("run", @params, Transformers.AsObject<List<DealCheckInsurance_RawRow>>);
+            return response.Select(x =>
             {
                 try { return x.Map(); }
                 catch { return null; }
