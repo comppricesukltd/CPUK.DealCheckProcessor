@@ -87,7 +87,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                 $"Your *{HotelData.Name}* results are ready - with every available {Emoji.Airplane}{Emoji.Bed} flight, room, and meal plan in one place.\n" +
                 $"\n" +
                 $"See your full set of live deals here:\n" +
-                GetLinkForDealCheckRequest(), out _);
+                GetLinkForDealCheckRequest(false), out _);
 
 
         public void StopUserMessaging()
@@ -197,7 +197,7 @@ namespace CPUK.DealCheckProcessor.App.Service
             {
                 TwilioService.SendWhatsappMessage(PhoneNumber,
                       $"Just a reminder - your {HotelData.Name} results are ready {Emoji.WhiteHeavyCheckMark}\n" +
-                      $"Open them here: {GetLinkForDealCheckRequest()}", out _);
+                      $"Open them here: {GetLinkForDealCheckRequest(false)}", out _);
             }
             return true;
         }
