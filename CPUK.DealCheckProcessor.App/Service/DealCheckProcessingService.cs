@@ -7,6 +7,7 @@ using CPUK.Domain.Data;
 using CPUK.Domain.DBModels.DealCheck;
 using CPUK.Domain.Entities.Company;
 using CPUK.Domain.Entities.DealCheck;
+using CPUK.Utility.Logging;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,7 @@ namespace CPUK.DealCheckProcessor.App.Service
         private readonly InsuranceExtractionService insuranceExtractionService = new InsuranceExtractionService();
         private readonly ParkingExtrasExtractionService parkingExtrasExtractionService = new ParkingExtrasExtractionService();
 
+
         public async Task Test()
         {
             var dealCheck = dealCheckRepository.GetDealCheckRequestViaDisplayId(9, new Guid("70a5485e-d4af-47d9-bbee-dfb61b16cc7f"));
@@ -48,16 +50,18 @@ namespace CPUK.DealCheckProcessor.App.Service
 
             var dealCheckList = dealCheckRepository.GetDealCheckRequestListNotCompleted();
 
-
+            Console.WriteLine($"Found {dealCheckList.Count} deal checks to process.");
             foreach (var dealCheck in dealCheckList)
             {
                 await ss_outter.WaitAsync();
                 taskList.Add(Task.Run(async () =>
                 {
+                    Console.WriteLine($"Starting dealcehck {dealCheck.Id}");
                     try
                     {
                         if (dealCheck.Criteria == null)
                         {
+                            Console.WriteLine($"Producing criteria for dealcehck {dealCheck.Id}");
                             await ProduceCriteria(dealCheck, ss_inner);
                         }
                         if (dealCheck.Criteria?.IsComplete ?? false)
@@ -72,6 +76,10 @@ namespace CPUK.DealCheckProcessor.App.Service
                             }
                         }
 
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error processing dealcehck {dealCheck.Id}: {ex.Message}");
                     }
                     finally { ss_outter.Release(); }
                 }));
@@ -235,10 +243,11 @@ namespace CPUK.DealCheckProcessor.App.Service
                 var messagingService = new UserMessagingService(dealCheckRequest);
                 messagingService.StartUserMessaging(hasDealsTask);
 
+                var processedCompanySet = dealCheckRequest.OfferList.Select(x => x.CompanyId).ToHashSet();
 
                 foreach (var company in StaticDataHolder.Company)
                 {
-                    if (company.Id == CompanyId.BookingCom) continue;//booking.com go separately after all
+                    if (processedCompanySet.Contains(company.Id) || company.Id == CompanyId.BookingCom) continue;//booking.com go separately after all
 
                     await semaphore.WaitAsync();
                     taskList.Add(TryProduceCompetitors(dealCheckRequest, company).ContinueWith(ct => { semaphore.Release(); return ct.Result; }));
@@ -288,14 +297,15 @@ namespace CPUK.DealCheckProcessor.App.Service
             var IsCompetitorSet = false;
             var offersCount = 0;
             var stopwatch = Stopwatch.StartNew();
+
+
+
             try
             {
+                RemoteLogger.Default.WriteLog_Info("Start TryProduceCompetitors", new { company, dealCheckRequest });
                 Console.WriteLine($"Start[{dealCheckRequest.Id}][{company.Name}]");
 
-                if(company.Id == CompanyId.OnTheBeach)
-                {
 
-                }
                 var offerList = await dealCheckProcessingService.GetOfferList(dealCheckRequest, company.Id);
                 if (offerList?.Any() ?? false)
                 {
@@ -306,7 +316,10 @@ namespace CPUK.DealCheckProcessor.App.Service
                 }
 
             }
-            catch { }
+            catch (Exception error)
+            {
+                RemoteLogger.Default.WriteLog_Error("TryProduceCompetitors", new { company, error });
+            }
             stopwatch.Stop();
             Console.WriteLine($"End[{dealCheckRequest.Id}][{company.Name}] Count={offersCount}; time={stopwatch.ElapsedMilliseconds}ms");
             return IsCompetitorSet;

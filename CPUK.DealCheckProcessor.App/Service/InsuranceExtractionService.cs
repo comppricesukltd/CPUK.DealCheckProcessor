@@ -28,30 +28,37 @@ namespace CPUK.DealCheckProcessor.App.Service
         }
         public async Task<List<DealCheckInsurance>> ExtractInsuranceForCriteria(DealCheckCriteria criteria)
         {
-            var hotel = GetTtiHotel(criteria.TtiCode);
-            var @params = new Dictionary<string, string> {
+            try
+            {
+
+                var hotel = GetTtiHotel(criteria.TtiCode);
+                var @params = new Dictionary<string, string> {
                 { "script", $"InsuranceComp.py" },
                 { "ADULTS", $"{criteria.Adults}" },
-                { "CHILDREN", string.Join(",", criteria.ChildAges)},
+                { "CHILDREN", string.Join(",", criteria.ChildAges?? new int[0])},
                 { "DEP_DATE", $"{criteria.DepartureDate.Value:dd/MM/yyyy}"},
                 { "RTN_DATE", $"{criteria.DepartureDate.Value.AddDays(criteria.Duration.Value):dd/MM/yyyy}"},
                 { "COUNTRY", hotel.Country}
             };
-            var cacheKey = string.Join("_", @params.Select(x => $"{x.Key}:{x.Value}"));
+                var cacheKey = string.Join("_", @params.Select(x => $"{x.Key}:{x.Value}"));
 
-            var cahceRecord = DealCheckInsuranceCacheStore.Value.Get(cacheKey);
-            if (cahceRecord?.Data?.Any() ?? false)
-            {
-                return cahceRecord.Data;
+                var cahceRecord = DealCheckInsuranceCacheStore.Value.Get(cacheKey);
+                if (cahceRecord?.Data?.Any() ?? false)
+                {
+                    return cahceRecord.Data;
+                }
+                else
+                {
+                    var data = await GetRealtimeData(@params);
+                    DealCheckInsuranceCacheStore.Value.Set(new DealCheckInsuranceCacheRow(cacheKey, data));
+
+                    return data;
+                }
             }
-            else
+            catch
             {
-                var data = await GetRealtimeData(@params);
-                DealCheckInsuranceCacheStore.Value.Set(new DealCheckInsuranceCacheRow(cacheKey, data));
-
-                return data;
+                return null;
             }
-
         }
 
         private static async Task<List<DealCheckInsurance>> GetRealtimeData(Dictionary<string, string> @params)

@@ -26,6 +26,7 @@ namespace CPUK.DealCheckProcessor.App
                 if (args.ElementAtOrDefault(0) == "-nudge")
                     await new ResultsReviewNudgeService().Run();
 
+                RemoteLogger.Default.FinalizeLog();
             });
     }
 

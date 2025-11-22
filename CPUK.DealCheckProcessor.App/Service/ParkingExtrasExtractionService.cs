@@ -45,8 +45,11 @@ namespace CPUK.DealCheckProcessor.App.Service
 
         public async Task<List<DealCheckExtrasParking>> ExtractParkingForCriteria_ExactAirport(DealCheckCriteria criteria, string airport)
         {
-            //https://www.holidayextras.com/static/?selectProduct=cp&#/carpark?lang=en&adults=2&depart=LGW&terminal=&arrive=&flight=&in=2025-12-26&out=2025-12-19&park_from=12%3A00%3A00&park_to=13%3A00&children=0&infants=0&from_categories=true
-            var urlParams = new Dictionary<string, string>()
+            try
+            {
+
+                //https://www.holidayextras.com/static/?selectProduct=cp&#/carpark?lang=en&adults=2&depart=LGW&terminal=&arrive=&flight=&in=2025-12-26&out=2025-12-19&park_from=12%3A00%3A00&park_to=13%3A00&children=0&infants=0&from_categories=true
+                var urlParams = new Dictionary<string, string>()
             {
                 { "lang", "en" },
                 { "adults", $"{criteria.Adults}" },
@@ -58,30 +61,35 @@ namespace CPUK.DealCheckProcessor.App.Service
                 { "in", $"{criteria.DepartureDate.Value.AddDays(criteria.Duration.Value):yyyy-MM-dd}" },
                 { "park_from", "12:00:00" },
                 { "park_to", "13:00" },
-                { "children", $"{criteria.ChildAges.Length}" },
+                { "children", $"{criteria.ChildAges?.Length ?? 0}" },
                 { "infants", "0" },
                 { "from_categories", "true" },
 
             };
-            var urlQuery = string.Join("&", urlParams.Select(x => $"{x.Key}={Uri.EscapeDataString(x.Value)}"));
-            var url = $"https://www.holidayextras.com/static/?selectProduct=cp&#/carpark?{urlQuery}";
-            var @params = new Dictionary<string, string> {
+                var urlQuery = string.Join("&", urlParams.Select(x => $"{x.Key}={Uri.EscapeDataString(x.Value)}"));
+                var url = $"https://www.holidayextras.com/static/?selectProduct=cp&#/carpark?{urlQuery}";
+                var @params = new Dictionary<string, string> {
                 { "script", $"holidayextras.py" },
                 { "URL", url },
             };
-            var cacheKey = string.Join("_", @params.Select(x => $"{x.Key}:{x.Value}"));
+                var cacheKey = string.Join("_", @params.Select(x => $"{x.Key}:{x.Value}"));
 
-            var cahceRecord = DealCheckInsuranceCacheStore.Value.Get(cacheKey);
-            if (cahceRecord?.Data?.Any() ?? false)
-            {
-                return cahceRecord.Data;
+                var cahceRecord = DealCheckInsuranceCacheStore.Value.Get(cacheKey);
+                if (cahceRecord?.Data?.Any() ?? false)
+                {
+                    return cahceRecord.Data;
+                }
+                else
+                {
+                    var data = await GetRealtimeData(@params);
+                    DealCheckInsuranceCacheStore.Value.Set(new DealCheckExtrasParkingCacheRow(cacheKey, data));
+
+                    return data;
+                }
             }
-            else
+            catch
             {
-                var data = await GetRealtimeData(@params);
-                DealCheckInsuranceCacheStore.Value.Set(new DealCheckExtrasParkingCacheRow(cacheKey, data));
-
-                return data;
+                return null;
             }
         }
         private static async Task<List<DealCheckExtrasParking>> GetRealtimeData(Dictionary<string, string> @params)
