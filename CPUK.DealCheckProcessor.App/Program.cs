@@ -27,7 +27,7 @@ namespace CPUK.DealCheckProcessor.App
                     await new ResultsReviewNudgeService().Run();
 
                 RemoteLogger.Default.FinalizeLog();
-            });
+            },true);
     }
 
 }
