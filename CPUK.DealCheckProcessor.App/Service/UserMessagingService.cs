@@ -64,7 +64,7 @@ namespace CPUK.DealCheckProcessor.App.Service
 
         private static string GetLinkForDealCheckRequest(Guid requestId, int userId, string phoneNumber, bool drillPage = true)
                 //=> shortLinkService.CreatShortLink(new ShortLinkBuilder($"http://localhost:4200/results/{requestId}",
-                => shortLinkService.CreatShortLink(new ShortLinkBuilder($"https://anybetter.com/results{(drillPage ? $"/{requestId.ToString().ToLower()}" : string.Empty)}",
+                => shortLinkService.CreatShortLink(new ShortLinkBuilder($"https://lastcheck.co.uk/results{(drillPage ? $"/{requestId.ToString().ToLower()}" : string.Empty)}",
                 new Dictionary<string, string> {
                     { MagicLinkService.QP_KEY, magicLinkService.CreateMagicLinkToken(userId).ToString().ToLower() },
                     { "phoneNumber", phoneNumber },
@@ -181,7 +181,7 @@ namespace CPUK.DealCheckProcessor.App.Service
         {
             //if (!TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
             //{
-            //    TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeGenericTemplateSid);
+            //    TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.LastCheck.AknowledgeGenericTemplateSid);
             //    return false;
             //}
             //else
@@ -207,7 +207,7 @@ namespace CPUK.DealCheckProcessor.App.Service
 
             //if (!TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
             //{
-            //    TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeGenericTemplateSid);
+            //    TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.LastCheck.AknowledgeGenericTemplateSid);
             //    return false;
             //}
             //else
