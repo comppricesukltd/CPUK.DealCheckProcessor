@@ -379,7 +379,7 @@
     <FtpPort>21</FtpPort>
     <FtpUsername>administrator</FtpUsername>
     <FtpPassword>7v!TO3f&amp;#*</FtpPassword>
-    <FtpRemoteRoot>/appmaster.anybetter.com/Builds/</FtpRemoteRoot>
+    <FtpRemoteRoot>/appmaster.lastcheck.co.uk/Builds/</FtpRemoteRoot>
   </PropertyGroup>
   <Target Name="ZipAndFtpDepoloy" AfterTargets="Build" Condition="$(Configuration) == 'ZipRelease'">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
