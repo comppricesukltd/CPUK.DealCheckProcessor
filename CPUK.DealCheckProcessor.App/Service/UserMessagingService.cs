@@ -104,7 +104,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                 if (!TwilioService.IsWhatsAppCSWindowOpen(PhoneNumber))
                 {
                     //step 0: Aknowledge. Ask permission for sending messages
-                    TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.AnyBetter.AknowledgeTemplateSid, new Dictionary<string, string>
+                    TwilioService.SendWhatsappMessage(PhoneNumber, string.Empty, out _, WhatsApp.LastCheck.AknowledgeTemplateSid, new Dictionary<string, string>
                     {
                         { "hotel_name",HotelData.Name },
                         { "destination",$"{HotelData.Country}, {HotelData.Locale}, {HotelData.City}" }
