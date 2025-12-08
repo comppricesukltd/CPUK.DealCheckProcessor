@@ -248,7 +248,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                 foreach (var company in StaticDataHolder.Company)
                 {
                     //temporarily disable jet2holidays as competitor due to issues
-                    if (company.Id == CompanyId.Jet2holidays) continue;
+                    //if (company.Id == CompanyId.Jet2holidays) continue;
 
 
                     if (processedCompanySet.Contains(company.Id) || company.Id == CompanyId.BookingCom) continue;//booking.com go separately after all
