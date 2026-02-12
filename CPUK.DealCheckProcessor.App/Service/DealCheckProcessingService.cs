@@ -44,8 +44,15 @@ namespace CPUK.DealCheckProcessor.App.Service
 
         public async Task Run()
         {
+
+#if DEBUG
+            var ss_inner = new SemaphoreSlim(1);
+            var ss_outter = new SemaphoreSlim(1);
+#else
             var ss_inner = new SemaphoreSlim(3);
             var ss_outter = new SemaphoreSlim(2);
+#endif
+
             var taskList = new List<Task>();
 
             var dealCheckList = dealCheckRepository.GetDealCheckRequestListNotCompleted();
