@@ -255,7 +255,7 @@ namespace CPUK.DealCheckProcessor.App.Service
                 foreach (var company in StaticDataHolder.Company)
                 {
                     //temporarily disable tuie as competitor due to issues
-                    if (company.Id == CompanyId.TUI) continue;
+                    if (company.Id == CompanyId.TUI) continue; 
 
 
                     if (processedCompanySet.Contains(company.Id) || company.Id == CompanyId.BookingCom) continue;//booking.com go separately after all
@@ -270,14 +270,16 @@ namespace CPUK.DealCheckProcessor.App.Service
 
                 if (anyCompetitorSet)
                 {
+                    //Booking.com DISABLED 12.02.2026.
+                    //`they dont want to see it at the moemtn - may cme back` - Brett
 
-                    try
-                    {
-                        var bookingCom = StaticDataHolder.Company.FirstOrDefault(x => x.Id == CompanyId.BookingCom);
-                        await semaphore.WaitAsync();
-                        await TryProduceCompetitors(dealCheckRequest, bookingCom);
-                    }
-                    finally { semaphore.Release(); }
+                    //try
+                    //{
+                    //    var bookingCom = StaticDataHolder.Company.FirstOrDefault(x => x.Id == CompanyId.BookingCom);
+                    //    await semaphore.WaitAsync();
+                    //    await TryProduceCompetitors(dealCheckRequest, bookingCom);
+                    //}
+                    //finally { semaphore.Release(); }
 
                     foreach (var companyGroup in dealCheckRequest.OfferList.GroupBy(x => x.CompanyId))
                     {
